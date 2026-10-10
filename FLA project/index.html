@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moore &amp; Mealy Machine Simulator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+
+        <!-- HEADER -->
+        <header>
+            <h1>⚙ Moore &amp; Mealy Simulator</h1>
+            <nav>
+                <button class="tab-btn active" data-target="editor">Define Machine</button>
+                <button class="tab-btn" data-target="simulator">Simulation</button>
+                <button class="tab-btn" data-target="converter">Converter</button>
+            </nav>
+        </header>
+
+        <main>
+
+            <!-- ============ DEFINE MACHINE TAB (FIRST) ============ -->
+            <section id="editor" class="tab-content active">
+                <div class="card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; margin-bottom:0.75rem;">
+                        <div>
+                            <h2 style="margin:0;">Define Your Machine</h2>
+                            <p class="muted" style="margin:0.25rem 0 0 0;">Enter states, alphabet, and output symbols. Then fill in the transition &amp; output tables.</p>
+                        </div>
+                        <select id="preset-selector-editor" class="preset-dropdown">
+                            <option value="">⚡ Load Preset Machine...</option>
+                            <option value="moore-default">Moore: 3-State Standard</option>
+                            <option value="mealy-compl">Mealy: 1's Complement</option>
+                            <option value="moore-mod3">Moore: Modulo-3 Counter</option>
+                            <option value="moore-seq101">Moore: Detect "101"</option>
+                            <option value="mealy-parity">Mealy: Odd Parity Checker</option>
+                        </select>
+                    </div>
+
+                    <!-- Machine type selector -->
+                    <div class="editor-controls">
+                        <div class="radio-group">
+                            <label class="radio-label"><input type="radio" name="machine-type" value="Moore" checked> Moore Machine</label>
+                            <label class="radio-label"><input type="radio" name="machine-type" value="Mealy"> Mealy Machine</label>
+                        </div>
+                    </div>
+
+                    <!-- Formal definition inputs -->
+                    <div class="define-grid">
+                        <div class="input-group">
+                            <label>Q — States <small>(comma-separated)</small></label>
+                            <input type="text" id="def-states" placeholder="q0,q1,q2" value="q0,q1,q2">
+                        </div>
+                        <div class="input-group">
+                            <label>Σ — Input Alphabet <small>(comma-separated)</small></label>
+                            <input type="text" id="def-alphabet" placeholder="a,b" value="a,b">
+                        </div>
+                        <div class="input-group">
+                            <label>Γ — Output Alphabet <small>(comma-separated)</small></label>
+                            <input type="text" id="def-outputs" placeholder="0,1" value="0,1">
+                        </div>
+                    </div>
+
+                    <button id="btn-generate-table" class="btn primary" style="margin-top:1rem;">Generate Transition Table</button>
+
+                    <!-- Generated transition table -->
+                    <div class="table-container" style="margin-top:1.5rem;">
+                        <table id="def-table" class="editor-table">
+                            <thead id="def-table-head"></thead>
+                            <tbody id="def-table-body"></tbody>
+                        </table>
+                    </div>
+
+                    <button id="btn-build-machine" class="btn primary glow" style="margin-top:1.25rem;">Build &amp; Simulate →</button>
+                </div>
+            </section>
+
+            <!-- ============ SIMULATION TAB ============ -->
+            <section id="simulator" class="tab-content">
+
+                <!-- Input Controls -->
+                <div class="card input-card">
+                    <div class="input-header">
+                        <div style="display:flex; align-items:center; gap:0.75rem;">
+                            <h2>Live Simulation</h2>
+                            <div class="badge" id="machine-type-badge">Moore Machine</div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:0.5rem;">
+                            <select id="preset-selector" class="preset-dropdown">
+                                <option value="">⚡ Load Preset Machine...</option>
+                                <option value="moore-default">Moore: 3-State Standard</option>
+                                <option value="mealy-compl">Mealy: 1's Complement</option>
+                                <option value="moore-mod3">Moore: Modulo-3 Counter</option>
+                                <option value="moore-seq101">Moore: Detect "101"</option>
+                                <option value="mealy-parity">Mealy: Odd Parity Checker</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label>Input String</label>
+                            <input type="text" id="sim-input" placeholder="e.g. aabba" value="aab">
+                        </div>
+                        <div class="btn-row">
+                            <button id="btn-play" class="btn primary glow">▶ Play</button>
+                            <button id="btn-step" class="btn outline">⏭ Step</button>
+                            <button id="btn-reset" class="btn outline">↺ Reset</button>
+                            <select id="sim-speed" class="speed-select" title="Animation Speed">
+                                <option value="1400">0.5x Slow</option>
+                                <option value="900" selected>1.0x Normal</option>
+                                <option value="450">2.0x Fast</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Live output ribbon -->
+                    <div class="output-ribbon">
+                        <div class="ribbon-item">
+                            <span class="ribbon-label">State Path</span>
+                            <span class="ribbon-value" id="state-path">–</span>
+                        </div>
+                        <div class="ribbon-item">
+                            <span class="ribbon-label">Output</span>
+                            <span class="ribbon-value accent" id="output-string">–</span>
+                        </div>
+                        <div class="ribbon-item">
+                            <span class="ribbon-label">Step</span>
+                            <span class="ribbon-value" id="step-counter">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Diagram + Trace side by side -->
+                <div class="grid-2">
+                    <div class="card machine-card">
+                        <h3>Transition Diagram</h3>
+                        <svg id="sim-svg" width="100%" height="360" viewBox="0 0 560 360"></svg>
+                    </div>
+                    <div class="card machine-card">
+                        <h3>Trace Table</h3>
+                        <div class="table-container">
+                            <table id="trace-table">
+                                <thead>
+                                    <tr><th>Step</th><th>State</th><th>Input</th><th>Next State</th><th>Output</th></tr>
+                                </thead>
+                                <tbody id="trace-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============ CONVERTER TAB ============ -->
+            <section id="converter" class="tab-content">
+                <div class="card">
+                    <div class="btn-group">
+                        <button id="btn-m2m" class="btn active">Moore → Mealy</button>
+                        <button id="btn-me2mo" class="btn">Mealy → Moore</button>
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div class="card machine-card">
+                        <h3 id="conv-src-title">Source Machine</h3>
+                        <svg id="conv-src-svg" width="100%" height="320" viewBox="0 0 560 360"></svg>
+                        <div class="table-container">
+                            <table id="conv-src-table">
+                                <thead id="conv-src-head"></thead>
+                                <tbody id="conv-src-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card machine-card">
+                        <h3 id="conv-tgt-title">Converted Machine</h3>
+                        <svg id="conv-tgt-svg" width="100%" height="320" viewBox="0 0 560 360"></svg>
+                        <div class="table-container">
+                            <table id="conv-tgt-table">
+                                <thead id="conv-tgt-head"></thead>
+                                <tbody id="conv-tgt-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Verification -->
+                <div class="card" style="margin-top:1.25rem;">
+                    <h3>🔍 Verify Equivalence</h3>
+                    <div style="display:flex; gap:1rem; align-items:flex-end;">
+                        <div class="input-group">
+                            <label>Test Input String</label>
+                            <input type="text" id="conv-verify-input" placeholder="e.g. aab" value="aab">
+                        </div>
+                        <button id="btn-verify" class="btn primary" style="white-space:nowrap;">Verify</button>
+                    </div>
+                    <div id="conv-verify-result" style="margin-top:0.75rem; font-size:0.9rem; line-height:1.6; font-family:monospace;">
+                        Enter an input string above to verify equivalence.
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
