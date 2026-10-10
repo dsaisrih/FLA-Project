@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <div class="app-container">
 
@@ -25,10 +27,12 @@
             <!-- ============ DEFINE MACHINE TAB (FIRST) ============ -->
             <section id="editor" class="tab-content active">
                 <div class="card">
-                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; margin-bottom:0.75rem;">
+                    <div
+                        style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; margin-bottom:0.75rem;">
                         <div>
                             <h2 style="margin:0;">Define Your Machine</h2>
-                            <p class="muted" style="margin:0.25rem 0 0 0;">Enter states, alphabet, and output symbols. Then fill in the transition &amp; output tables.</p>
+                            <p class="muted" style="margin:0.25rem 0 0 0;">Enter states, alphabet, and output symbols.
+                                Then fill in the transition &amp; output tables.</p>
                         </div>
                         <select id="preset-selector-editor" class="preset-dropdown">
                             <option value="">⚡ Load Preset Machine...</option>
@@ -43,8 +47,10 @@
                     <!-- Machine type selector -->
                     <div class="editor-controls">
                         <div class="radio-group">
-                            <label class="radio-label"><input type="radio" name="machine-type" value="Moore" checked> Moore Machine</label>
-                            <label class="radio-label"><input type="radio" name="machine-type" value="Mealy"> Mealy Machine</label>
+                            <label class="radio-label"><input type="radio" name="machine-type" value="Moore" checked>
+                                Moore Machine</label>
+                            <label class="radio-label"><input type="radio" name="machine-type" value="Mealy"> Mealy
+                                Machine</label>
                         </div>
                     </div>
 
@@ -64,7 +70,8 @@
                         </div>
                     </div>
 
-                    <button id="btn-generate-table" class="btn primary" style="margin-top:1rem;">Generate Transition Table</button>
+                    <button id="btn-generate-table" class="btn primary" style="margin-top:1rem;">Generate Transition
+                        Table</button>
 
                     <!-- Generated transition table -->
                     <div class="table-container" style="margin-top:1.5rem;">
@@ -74,7 +81,8 @@
                         </table>
                     </div>
 
-                    <button id="btn-build-machine" class="btn primary glow" style="margin-top:1.25rem;">Build &amp; Simulate →</button>
+                    <button id="btn-build-machine" class="btn primary glow" style="margin-top:1.25rem;">Build &amp;
+                        Simulate →</button>
                 </div>
             </section>
 
@@ -143,7 +151,13 @@
                         <div class="table-container">
                             <table id="trace-table">
                                 <thead>
-                                    <tr><th>Step</th><th>State</th><th>Input</th><th>Next State</th><th>Output</th></tr>
+                                    <tr>
+                                        <th>Step</th>
+                                        <th>State</th>
+                                        <th>Input</th>
+                                        <th>Next State</th>
+                                        <th>Output</th>
+                                    </tr>
                                 </thead>
                                 <tbody id="trace-body"></tbody>
                             </table>
@@ -193,7 +207,8 @@
                         </div>
                         <button id="btn-verify" class="btn primary" style="white-space:nowrap;">Verify</button>
                     </div>
-                    <div id="conv-verify-result" style="margin-top:0.75rem; font-size:0.9rem; line-height:1.6; font-family:monospace;">
+                    <div id="conv-verify-result"
+                        style="margin-top:0.75rem; font-size:0.9rem; line-height:1.6; font-family:monospace;">
                         Enter an input string above to verify equivalence.
                     </div>
                 </div>
@@ -202,4 +217,5 @@
     </div>
     <script src="app.js"></script>
 </body>
+
 </html>

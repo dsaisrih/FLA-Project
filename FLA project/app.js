@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const c2x = p1.x + 55 * ux + 26 * px;
                 const c2y = p1.y + 55 * uy + 26 * py;
 
-                d = `M ${sx} ${sy} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${ex} ${ey}`;
+                d = `M ${sx} ${sy} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${p1.x} ${p1.y}`;
                 tx = p1.x + 52 * ux;
                 ty = p1.y + 52 * uy;
             } else {
@@ -184,11 +184,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 html += `<text x="${p.x - 40}" y="${p.y - 8}" fill="#94a3b8" font-size="9" font-weight="600">start</text>`;
             }
 
-            html += `<text x="${p.x}" y="${p.y + 5}" fill="${textFill}" font-size="13" font-weight="700" text-anchor="middle">${st}</text>`;
-
             if (isMoore) {
                 const out = m.outputs[st] || '-';
-                html += `<text x="${p.x}" y="${p.y + 38}" fill="${isHL ? '#fbbf24' : accent}" font-size="12" text-anchor="middle" font-weight="700">/${out}</text>`;
+                const lineStroke = isHL ? 'rgba(0,0,0,0.3)' : stroke;
+                const outFill = isHL ? '#000' : accent;
+                html += `<text x="${p.x}" y="${p.y - 3}" fill="${textFill}" font-size="13" font-weight="700" text-anchor="middle">${st}</text>`;
+                html += `<line x1="${p.x - 21}" y1="${p.y + 4}" x2="${p.x + 21}" y2="${p.y + 4}" stroke="${lineStroke}" stroke-width="1.5"/>`;
+                html += `<text x="${p.x}" y="${p.y + 16}" fill="${outFill}" font-size="11" text-anchor="middle" font-weight="700">${out}</text>`;
+            } else {
+                html += `<text x="${p.x}" y="${p.y + 5}" fill="${textFill}" font-size="13" font-weight="700" text-anchor="middle">${st}</text>`;
             }
         });
 
