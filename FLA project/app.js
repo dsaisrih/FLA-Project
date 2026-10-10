@@ -7,13 +7,14 @@ document.addEventListener('DOMContentLoaded', () => {
         type: 'Moore',
         startState: 'q0',
         alphabet: ['a', 'b'],
-        states: ['q0', 'q1', 'q2'],
+        states: ['q0', 'q1', 'q2', 'q3'],
         transitions: {
             'q0': { 'a': 'q1', 'b': 'q0' },
             'q1': { 'a': 'q1', 'b': 'q2' },
-            'q2': { 'a': 'q0', 'b': 'q2' }
+            'q2': { 'a': 'q3', 'b': 'q0' },
+            'q3': { 'a': 'q1', 'b': 'q0' }
         },
-        outputs: { 'q0': '0', 'q1': '0', 'q2': '1' }
+        outputs: { 'q0': '0', 'q1': '0', 'q2': '0', 'q3': '1' }
     };
 
     // =====================================================================
@@ -73,10 +74,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const uid = svgEl.id || 'svg';
 
         let html = `<defs>
-            <marker id="arr-${uid}" viewBox="0 0 10 10" refX="22" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <marker id="arr-${uid}" viewBox="0 0 10 10" refX="22" refY="5" markerWidth="6" markerHeight="6" orient="auto">
                 <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/>
             </marker>
-            <marker id="arr-hl-${uid}" viewBox="0 0 10 10" refX="22" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <marker id="arr-hl-${uid}" viewBox="0 0 10 10" refX="22" refY="5" markerWidth="6" markerHeight="6" orient="auto">
                 <path d="M 0 0 L 10 5 L 0 10 z" fill="#facc15"/>
             </marker>
             <filter id="glow-${uid}">
@@ -118,8 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const sx = p1.x + 18 * ux - 13 * px;
                 const sy = p1.y + 18 * uy - 13 * py;
-                const ex = p1.x + 18 * ux + 13 * px;
-                const ey = p1.y + 18 * uy + 13 * py;
 
                 const c1x = p1.x + 55 * ux - 26 * px;
                 const c1y = p1.y + 55 * uy - 26 * py;
@@ -180,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Start-state arrow
             if (st === m.startState) {
-                html += `<line x1="${p.x - 52}" y1="${p.y}" x2="${p.x - 27}" y2="${p.y}" stroke="${stroke}" stroke-width="2" marker-end="url(#arr-${uid})"/>`;
+                html += `<line x1="${p.x - 55}" y1="${p.y}" x2="${p.x}" y2="${p.y}" stroke="${stroke}" stroke-width="2" marker-end="url(#arr-${uid})"/>`;
                 html += `<text x="${p.x - 40}" y="${p.y - 8}" fill="#94a3b8" font-size="9" font-weight="600">start</text>`;
             }
 
@@ -197,6 +196,87 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         svgEl.innerHTML = html;
+        if (svgEl.id === 'sim-svg') {
+            applyZoomPan();
+        }
+    }
+
+    // =====================================================================
+    //  ZOOM & PAN FOR TRANSITION DIAGRAM
+    // =====================================================================
+    let zoomLevel = 1.25; // Default zoomed in for clear, large view
+    let panX = 0, panY = 0;
+
+    function applyZoomPan() {
+        const simSvg = document.getElementById('sim-svg');
+        if (!simSvg) return;
+        const baseW = 560, baseH = 360;
+        const w = baseW / zoomLevel;
+        const h = baseH / zoomLevel;
+        const x = (baseW - w) / 2 + panX;
+        const y = (baseH - h) / 2 + panY;
+        simSvg.setAttribute('viewBox', `${x} ${y} ${w} ${h}`);
+    }
+
+    const btnZoomIn = document.getElementById('btn-zoom-in');
+    const btnZoomOut = document.getElementById('btn-zoom-out');
+    const btnZoomReset = document.getElementById('btn-zoom-reset');
+    const svgContainer = document.getElementById('svg-container');
+
+    if (btnZoomIn) {
+        btnZoomIn.addEventListener('click', () => {
+            zoomLevel = Math.min(3.5, zoomLevel + 0.25);
+            applyZoomPan();
+        });
+    }
+    if (btnZoomOut) {
+        btnZoomOut.addEventListener('click', () => {
+            zoomLevel = Math.max(0.5, zoomLevel - 0.25);
+            applyZoomPan();
+        });
+    }
+    if (btnZoomReset) {
+        btnZoomReset.addEventListener('click', () => {
+            zoomLevel = 1.25;
+            panX = 0;
+            panY = 0;
+            applyZoomPan();
+        });
+    }
+
+    if (svgContainer) {
+        svgContainer.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const delta = e.deltaY < 0 ? 0.15 : -0.15;
+            zoomLevel = Math.max(0.5, Math.min(3.5, zoomLevel + delta));
+            applyZoomPan();
+        }, { passive: false });
+
+        let isDragging = false, startX = 0, startY = 0, startPanX = 0, startPanY = 0;
+        svgContainer.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            startPanX = panX;
+            startPanY = panY;
+            svgContainer.style.cursor = 'grabbing';
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+            panX = startPanX - dx / zoomLevel;
+            panY = startPanY - dy / zoomLevel;
+            applyZoomPan();
+        });
+
+        window.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                svgContainer.style.cursor = 'grab';
+            }
+        });
     }
 
     // =====================================================================
@@ -705,14 +785,15 @@ document.addEventListener('DOMContentLoaded', () => {
             type: 'Moore',
             startState: 'q0',
             alphabet: ['a', 'b'],
-            states: ['q0', 'q1', 'q2'],
+            states: ['q0', 'q1', 'q2', 'q3'],
             transitions: {
                 'q0': { 'a': 'q1', 'b': 'q0' },
                 'q1': { 'a': 'q1', 'b': 'q2' },
-                'q2': { 'a': 'q0', 'b': 'q2' }
+                'q2': { 'a': 'q3', 'b': 'q0' },
+                'q3': { 'a': 'q1', 'b': 'q0' }
             },
-            outputs: { 'q0': '0', 'q1': '0', 'q2': '1' },
-            sampleInput: 'aab'
+            outputs: { 'q0': '0', 'q1': '0', 'q2': '0', 'q3': '1' },
+            sampleInput: 'aba'
         },
         'mealy-compl': {
             type: 'Mealy',
@@ -841,8 +922,5 @@ document.addEventListener('DOMContentLoaded', () => {
     // =====================================================================
     //  BOOT
     // =====================================================================
-    buildTrace();
-    renderStep(0);
-    // Pre-render converter so it's ready
-    updateConverter();
+    loadPreset('moore-default');
 });

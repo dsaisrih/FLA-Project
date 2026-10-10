@@ -36,7 +36,7 @@
                         </div>
                         <select id="preset-selector-editor" class="preset-dropdown">
                             <option value="">⚡ Load Preset Machine...</option>
-                            <option value="moore-default">Moore: 3-State Standard</option>
+                            <option value="moore-default">Moore: 4-State Standard</option>
                             <option value="mealy-compl">Mealy: 1's Complement</option>
                             <option value="moore-mod3">Moore: Modulo-3 Counter</option>
                             <option value="moore-seq101">Moore: Detect "101"</option>
@@ -58,7 +58,7 @@
                     <div class="define-grid">
                         <div class="input-group">
                             <label>Q — States <small>(comma-separated)</small></label>
-                            <input type="text" id="def-states" placeholder="q0,q1,q2" value="q0,q1,q2">
+                            <input type="text" id="def-states" placeholder="q0,q1,q2,q3" value="q0,q1,q2,q3">
                         </div>
                         <div class="input-group">
                             <label>Σ — Input Alphabet <small>(comma-separated)</small></label>
@@ -143,8 +143,17 @@
                 <!-- Diagram + Trace side by side -->
                 <div class="grid-2">
                     <div class="card machine-card">
-                        <h3>Transition Diagram</h3>
-                        <svg id="sim-svg" width="100%" height="360" viewBox="0 0 560 360"></svg>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+                            <h3 style="margin:0;">Transition Diagram</h3>
+                            <div style="display:flex; gap:0.35rem; align-items:center;">
+                                <button id="btn-zoom-in" class="btn outline" style="padding:0.25rem 0.6rem; font-size:0.8rem;" title="Zoom In">🔍 +</button>
+                                <button id="btn-zoom-out" class="btn outline" style="padding:0.25rem 0.6rem; font-size:0.8rem;" title="Zoom Out">🔍 −</button>
+                                <button id="btn-zoom-reset" class="btn outline" style="padding:0.25rem 0.6rem; font-size:0.8rem;" title="Reset View">↺</button>
+                            </div>
+                        </div>
+                        <div style="position:relative; overflow:hidden; border-radius:8px; cursor:grab;" id="svg-container">
+                            <svg id="sim-svg" width="100%" height="360" viewBox="0 0 560 360"></svg>
+                        </div>
                     </div>
                     <div class="card machine-card">
                         <h3>Trace Table</h3>
