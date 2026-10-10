@@ -7,14 +7,13 @@ document.addEventListener('DOMContentLoaded', () => {
         type: 'Moore',
         startState: 'q0',
         alphabet: ['a', 'b'],
-        states: ['q0', 'q1', 'q2', 'q3'],
+        states: ['q0', 'q1', 'q2'],
         transitions: {
-            'q0': { 'a': 'q1', 'b': 'q0' },
+            'q0': { 'a': 'q0', 'b': 'q1' },
             'q1': { 'a': 'q1', 'b': 'q2' },
-            'q2': { 'a': 'q3', 'b': 'q0' },
-            'q3': { 'a': 'q1', 'b': 'q0' }
+            'q2': { 'a': 'q2', 'b': 'q0' }
         },
-        outputs: { 'q0': '0', 'q1': '0', 'q2': '0', 'q3': '1' }
+        outputs: { 'q0': '0', 'q1': '1', 'q2': '0' }
     };
 
     // =====================================================================
@@ -785,15 +784,14 @@ document.addEventListener('DOMContentLoaded', () => {
             type: 'Moore',
             startState: 'q0',
             alphabet: ['a', 'b'],
-            states: ['q0', 'q1', 'q2', 'q3'],
+            states: ['q0', 'q1', 'q2'],
             transitions: {
-                'q0': { 'a': 'q1', 'b': 'q0' },
+                'q0': { 'a': 'q0', 'b': 'q1' },
                 'q1': { 'a': 'q1', 'b': 'q2' },
-                'q2': { 'a': 'q3', 'b': 'q0' },
-                'q3': { 'a': 'q1', 'b': 'q0' }
+                'q2': { 'a': 'q2', 'b': 'q0' }
             },
-            outputs: { 'q0': '0', 'q1': '0', 'q2': '0', 'q3': '1' },
-            sampleInput: 'aba'
+            outputs: { 'q0': '0', 'q1': '1', 'q2': '0' },
+            sampleInput: 'aab'
         },
         'mealy-compl': {
             type: 'Mealy',
